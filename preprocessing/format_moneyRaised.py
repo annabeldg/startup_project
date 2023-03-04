@@ -7,9 +7,10 @@ def format_moneyRaised(df):
     '''
 
     def preprocess_moneyRaised(x):
-        return float(json.loads(x)["amountUSD"])
+        return float(json.loads(x)["amountUSD"])/100
 
     df['moneyRaised'].replace(np.nan,'{"amount": 0, "currency": "USD", "amountUSD": 0}', inplace=True)
     df['moneyRaised_USD'] = df['moneyRaised'].apply(lambda x: preprocess_moneyRaised(x))
+    df.drop(columns='moneyRaised',inplace = True)
 
     return df
