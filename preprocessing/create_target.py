@@ -17,4 +17,6 @@ def create_target(df):
     df.loc[(df.Target==1) & (df.exited_on.notnull()), 'time_to_success'] = df['exited_on']-df['founded_on']
     df.loc[(df.Target==1) & (df.went_public_on.notnull()), 'time_to_success'] = df['went_public_on']-df['founded_on']
 
+    df['time_to_success']=df['time_to_success'].dt.components.days
+
     return df
