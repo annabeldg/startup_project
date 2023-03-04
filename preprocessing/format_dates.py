@@ -1,4 +1,3 @@
-
 import pandas as pd
 
 def format_dates(df, column_list):
