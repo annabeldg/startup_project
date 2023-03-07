@@ -15,7 +15,8 @@ print('Dataset successfully read!')
 
 ## DROP PROPER DUPLICATES ##
 
-df.drop_duplicates(inplace=True)
+data_path=os.path.join(os.path.abspath(os.getcwd()),'raw_data')
+df=pd.read_csv(os.path.join(data_path,'startups.csv'))
 
 ## STARTING PREPROCESSING TASKS ##
 
