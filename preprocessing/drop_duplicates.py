@@ -7,7 +7,6 @@ from preprocessing.format_last_equity_funding_total_moneyRaised import format_la
 
 # Do not forget to df.drop_duplicates the original raw dataset :)
 
-
 def industry_encoding(data):
     '''
     Returns all one-hot-encoded columns of industry_name feature as a df.
@@ -84,20 +83,20 @@ def funding_encoding(data):
     data_fun.sort_values(by=['id', 'announcedOn'], inplace=True)
 
     # Use Baptiste's function to transform money raised from json --> int
-    format_last_equity_funding_total_moneyRaised(data_fun)
+    # format_last_equity_funding_total_moneyRaised(data_fun)
 
     # Convert money raised to real value (before, forgot the two decimals)
-    data_fun['moneyRaised_USD'] = data_fun['moneyRaised_USD']/100
+    data_fun['moneyRaised'] = data_fun['moneyRaised']/100
 
     # Drop columns we don't need anymore and rows that raised 0 USD
-    data_fun.drop(columns=['moneyRaised', 'announcedOn'], inplace=True)
-    data_fun = data_fun[data_fun['moneyRaised_USD'] != 0]
+    data_fun.drop(columns=['announcedOn'], inplace=True)
+    data_fun = data_fun[data_fun['moneyRaised'] != 0]
 
     # Add the occurence number of a company id
     data_fun['index'] = data_fun.groupby('id').cumcount() + 1
 
     # Pivot the data to create the desired output
-    output = data_fun.pivot(index='id', columns='index', values='moneyRaised_USD')
+    output = data_fun.pivot(index='id', columns='index', values='moneyRaised')
 
     # Rename the columns to match the desired output and reset index
     output.columns = [str(i) for i in output.columns]
@@ -111,6 +110,8 @@ def funding_encoding(data):
     for i in range(1, 6):
         data_fun.rename(columns={str(i): f'Round {str(i)}'}, inplace=True)
 
+    return data_fun
+
 
 def merged_all(main_df, industry_df, technology_df, funding_df):
     '''
@@ -121,17 +122,19 @@ def merged_all(main_df, industry_df, technology_df, funding_df):
     # Drop columns that multiply duplicates then drop duplicates
     data_merged = main_df.drop(columns=['industry_name',
                                         'technology_name',
-                                        'announcedOn',
-                                        'moneyRaised'])
+                                        'announcedOn'])
     data_merged = data_merged.drop_duplicates().reset_index(drop=True)
 
     # Merge industry dataframe
     data_merged_ind = data_merged.merge(industry_df, on='id', how='left')
+    print(data_merged_ind.shape)
 
     # Merge technology dataframe
     data_merged_tec = data_merged_ind.merge(technology_df, on='id', how='left')
+    print(data_merged_tec.shape)
 
     # Merge funding round dataframe
     data_merged_all = data_merged_tec.merge(funding_df, on='id', how='left')
+    print(data_merged_all.shape)
 
     return data_merged_all
