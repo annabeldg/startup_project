@@ -1,9 +1,5 @@
-import numpy as np
 import pandas as pd
-
 from sklearn.preprocessing import OneHotEncoder
-
-from preprocessing.format_last_equity_funding_total_moneyRaised import format_last_equity_funding_total_moneyRaised
 
 # Do not forget to df.drop_duplicates the original raw dataset :)
 
@@ -85,12 +81,19 @@ def funding_encoding(data):
     # Use Baptiste's function to transform money raised from json --> int
     # format_last_equity_funding_total_moneyRaised(data_fun)
 
+    ## SET THE FOLLOWING BEFORE MY PART
+    #def preprocess_moneyRaised(x):
+    #    return float(json.loads(x)["amountUSD"])
+
+    #data_fun['moneyRaised'] = data_fun['moneyRaised'].map(lambda x: preprocess_moneyRaised(x), na_action='ignore')
+
     # Convert money raised to real value (before, forgot the two decimals)
     data_fun['moneyRaised'] = data_fun['moneyRaised']/100
 
     # Drop columns we don't need anymore and rows that raised 0 USD
     data_fun.drop(columns=['announcedOn'], inplace=True)
     data_fun = data_fun[data_fun['moneyRaised'] != 0]
+    data_fun = data_fun[data_fun['moneyRaised'].isnull() == False]
 
     # Add the occurence number of a company id
     data_fun['index'] = data_fun.groupby('id').cumcount() + 1
@@ -122,19 +125,20 @@ def merged_all(main_df, industry_df, technology_df, funding_df):
     # Drop columns that multiply duplicates then drop duplicates
     data_merged = main_df.drop(columns=['industry_name',
                                         'technology_name',
-                                        'announcedOn'])
+                                        'announcedOn',
+                                        'moneyRaised'])
     data_merged = data_merged.drop_duplicates().reset_index(drop=True)
 
     # Merge industry dataframe
     data_merged_ind = data_merged.merge(industry_df, on='id', how='left')
-    print(data_merged_ind.shape)
+    #print(data_merged_ind.shape)
 
     # Merge technology dataframe
     data_merged_tec = data_merged_ind.merge(technology_df, on='id', how='left')
-    print(data_merged_tec.shape)
+    #print(data_merged_tec.shape)
 
     # Merge funding round dataframe
     data_merged_all = data_merged_tec.merge(funding_df, on='id', how='left')
-    print(data_merged_all.shape)
+    #print(data_merged_all.shape)
 
     return data_merged_all
