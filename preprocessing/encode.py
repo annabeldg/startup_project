@@ -30,3 +30,10 @@ def continuous_encode(data, column):
     encoding = pd.DataFrame(data[column].map(count_dict))
 
     return encoding
+
+# Clean last equity funding
+
+def drop_columns(data):
+    columns_to_drop = ["NaN", "series_unknown", "undisclosed","corporate_round", "initial_coin_offering"]
+    cleaned_df = data.drop(columns=columns_to_drop, errors="ignore")
+    return cleaned_df
