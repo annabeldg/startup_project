@@ -17,14 +17,14 @@ def format_object_float_int_columns(df):
 
                 if column_type=='object':
 
-                    df[column_to_fill].fillna("none",inplace=True)
+                    df[column_to_fill].fillna("unknown",inplace=True)
 
                 else:
 
-                    if column_to_fill !='time_to_success':
+                    #if column_to_fill !='time_to_success':
 
                         df[column_to_fill].fillna(0,inplace=True)
 
-    df.drop(columns=['website', 'short_description'],inplace = True)
+    #df.drop(columns=['website', 'short_description'],inplace = True)
 
     return df
