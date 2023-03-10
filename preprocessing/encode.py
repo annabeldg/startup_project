@@ -1,6 +1,6 @@
 import pandas as pd
 
-def one_hot_encode(data, column):
+def one_hot_encode_last_equity_funding_type(data, column):
    
     # Get unique values
     unique_values = data[column].unique()
@@ -30,6 +30,43 @@ def continuous_encode(data, column):
     encoding = pd.DataFrame(data[column].map(count_dict))
 
     return encoding
+
+
+# STEP 1 --> Get ride of some columns --> Concatenate them in others
+
+import pandas as pd
+
+def replace_rare_values_with_others(data, column):
+    # Count the number of occurrences of each value
+    value_counts = data[column].value_counts()
+
+    # Get values that appear fewer than 2 times
+    rare_values = value_counts[value_counts < 2].index.tolist()
+
+    # Replace rare values with "OTHERS"
+    data[column] = data[column].apply(lambda x: "OTHERS" if x in rare_values else x)
+
+    return data
+
+# STEP 2 --> Encode 
+
+def one_hot_encode_headquarters_Country(data, column):
+   
+    # Get unique values
+    unique_values = data[column].unique()
+
+    # Create a dictionary to map each unique value to a binary feature
+    feature_dict = {value: [1 if value == val else 0 for val in unique_values] for value in unique_values}
+
+    # Convert data to binary features using one-hot encoding
+    binary_data = []
+    for value in data[column]:
+        binary_data.append(feature_dict.get(value, [0]*len(unique_values)))
+
+    # Convert binary data to a pandas DataFrame
+    binary_df = pd.DataFrame(binary_data, columns=unique_values)
+
+    return binary_df
 
 # Clean last equity funding
 
