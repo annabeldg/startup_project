@@ -12,6 +12,10 @@ from preprocessing.engineer import calculate_days_between_dates
 
 from preprocessing.missing_data import miss_total, miss_hq, miss_employee, miss_round1, miss_round2345
 
+from preprocessing.outliers import outlier_rounds, outlier_total
+
+from preprocessing.scaling import scale_standard, scale_minmax
+
 from preprocessing.drop_duplicates import industry_encoding, technology_encoding, funding_encoding, merged_all
 
 # Read our main database, the startups.csv
@@ -19,9 +23,11 @@ data_path = os.path.join(os.path.abspath(os.getcwd()),'raw_data')
 df = pd.read_csv(os.path.join(data_path,'startups.csv'))
 print('Dataset successfully read!')
 
+
 ## 1. DROP PROPER DUPLICATES ##
 
 df.drop_duplicates(inplace=True)
+
 
 ## 2. DROP LEFT-JOINED DUPLICATES (+ ENCODING OF INDUSTRY, TECHNOLOGY, ROUNDS) ##
 
@@ -35,6 +41,8 @@ data_fun = funding_encoding(df)
 
 # Merge all in the main df
 data_nodup = merged_all(df, data_ind, data_tec, data_fun)
+
+print('Remove duplicates: Success')
 
 ## 3. ENCODING & FEATURE ENGINEERING THE REST ##
 
@@ -65,6 +73,9 @@ data_nodup = calculate_days_between_dates(data_nodup)
 # Encode the target variable
 data_encoded = create_target(data_nodup)
 
+print('Features encoded: Success')
+
+
 ## 4. MISSING DATA ##
 
 # Fill missing values for last_equity_funding_total
@@ -84,19 +95,41 @@ data_encoded = miss_round1(data_encoded)
 # Replace missing values of Round 2 -> 5 by 0
 data_filled = miss_round2345(data_encoded)
 
+print('Handle missing values: Success')
+
+
 ## 5. OUTLIERS ##
 
-prone_to_outliers = ['last_equity_funding_total', 'Round 1 --> 5']
+# Keep rows where $50,000 < last_equity_funding_total < $200,000,000
+data_filled = outlier_total(data_filled)
 
+# Keep rows where $50,000 < Round 1->5
+data_noout = outlier_rounds(data_filled)
+
+print('Remove outliers: Success')
 
 ## 6. SCALING ##
 
+# Standard-scale employees, funding total, number of rounds, and days
+scale_standard(data_noout)
 
-print(data_encoded.shape)
+# Minmax-scale Round 1 to 5
+scale_minmax(data_noout)
+data_scaled = data_noout
+
+print('Feature scaling: Success')
+
+
+## 7. BALANCING ##
+
+print('Data balancing: To be done')
+
+
+print(data_scaled.shape)
 
 
 
-data_encoded.to_csv(os.path.join(data_path, 'startups_modified.csv'), index=False)
+data_scaled.to_csv(os.path.join(data_path, 'startups_modified.csv'), index=False)
 
 ## IF WE HAVE SOME TIME ##
 
