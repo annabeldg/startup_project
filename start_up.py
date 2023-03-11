@@ -35,21 +35,27 @@ data_nodup = merged_all(df, data_ind, data_tec, data_fun)
 data_nodup.drop(columns=['id', 'name', 'website', 'short_description', 'ipo_status', 'headquartersRegion'],
                 inplace=True)
 
-to_encode = ['last_equity_funding_type', 'last_equity_funding_total', 'headquartersCountry']
+# Extract float from json in last_equity_funding_total
+data_nodup['last_equity_funding_total'] = data_nodup['last_equity_funding_total'].map(
+    lambda x: json_to_float(x), na_action='ignore'
+    )
+data_nodup['last_equity_funding_total'] = data_nodup['last_equity_funding_total']/100
+
+to_encode = ['last_equity_funding_type', 'last_equity_funding_total OK', 'headquartersCountry']
 to_engineer = ['founded_on', 'last_funding_at']
 
 # Encode the target variable
 data_encoded = create_target(data_nodup) #missing values in columns: time_to_success
 
-## 4. OUTLIERS ##
-
-prone_to_outliers = ['last_equity_funding_total', 'Round 1 --> 5']
-# Do not forget to /100 last_equity_funding_total
-
-## 5. MISSING DATA ##
+## 4. MISSING DATA ##
 
 columns_where_misses = ['last_equity_funding_type', 'last_equity_funding_total'
                         'headquartersCountry', 'employeeCount', 'Round 1-->5']
+
+## 5. OUTLIERS ##
+
+prone_to_outliers = ['last_equity_funding_total', 'Round 1 --> 5']
+
 
 ## 6. SCALING ##
 
