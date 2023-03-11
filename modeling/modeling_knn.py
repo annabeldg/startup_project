@@ -8,7 +8,6 @@ from train_test_split import train_test_split
 
 from sklearn.preprocessing import StandardScaler
 
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
