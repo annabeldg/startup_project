@@ -30,13 +30,13 @@ X, y = create_X_y(df)
 
 #scaling-to remove
 scaler=StandardScaler()
-columns_to_scale=['num_funding_rounds', 'last_equity_funding_total', 'employeeCount','Round 1','Round 2', 'Round 3', 'Round 4', 'Round 5']
+columns_to_scale=['num_funding_rounds', 'last_equity_funding_total', 'employeeCount','Round 1','Round 2', 'Round 3', 'Round 4', 'Round 5','days_between_dates']
 X[columns_to_scale]=scaler.fit_transform(X[columns_to_scale])
 
 X_train, X_test, y_train, y_test = train_test_split(X, y)
 
-model = KNeighborsClassifier()
-grid_dict= {'n_neighbors':[1,2,3,4,5]}
+model = LogisticRegression(max_iter=1000)
+grid_dict= {'penalty':['l2', 'none'],'C':[0.01, 0.1, 0.5, 1, 1.5],'class_weight':['balanced', 'none']}
 scoring_list=['accuracy','recall','precision', 'f1']
 search = GridSearchCV(model,grid_dict, scoring = scoring_list[2],cv = 5,n_jobs=-1)
 search.fit(X_train, y_train)
