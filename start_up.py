@@ -1,9 +1,15 @@
 import os
 import pandas as pd
+import numpy as np
 
 from preprocessing.create_target import create_target
 from preprocessing.format_json_to_float import json_to_float
 from preprocessing.format_object_float_int_columns import format_object_float_int_columns
+
+from preprocessing.encode import replace_rare_values_with_others, one_hot_encode_headquarters_Country, drop_columns
+from preprocessing.encode import one_hot_encode_last_equity_funding_type
+
+from preprocessing.engineer import calculate_days_between_dates
 
 from preprocessing.drop_duplicates import industry_encoding, technology_encoding, funding_encoding, merged_all
 
@@ -41,11 +47,24 @@ data_nodup['last_equity_funding_total'] = data_nodup['last_equity_funding_total'
     )
 data_nodup['last_equity_funding_total'] = data_nodup['last_equity_funding_total']/100
 
-to_encode = ['last_equity_funding_type', 'last_equity_funding_total OK', 'headquartersCountry']
-to_engineer = ['founded_on', 'last_funding_at']
+# One hot encode countries with threshold for 'OTHERS' if num of occurence < 50, and merge with database
+data_nodup = replace_rare_values_with_others(data_nodup, 'headquartersCountry')
+countries = one_hot_encode_headquarters_Country(data_nodup, 'headquartersCountry')
+countries.drop(columns=[np.nan], inplace=True)
+data_nodup = data_nodup.join(countries)
+data_nodup.drop(columns='headquartersCountry', inplace=True)
+
+# One hot encode last_equity_funding_type
+left = one_hot_encode_last_equity_funding_type(data_nodup, 'last_equity_funding_type')
+left = drop_columns(left)
+data_nodup = data_nodup.join(left)
+data_nodup.drop(columns='last_equity_funding_type', inplace=True)
+
+# Engineer the number of days between last_funding_at and founded_on
+data_nodup = calculate_days_between_dates(data_nodup)
 
 # Encode the target variable
-data_encoded = create_target(data_nodup) #missing values in columns: time_to_success
+data_encoded = create_target(data_nodup)
 
 ## 4. MISSING DATA ##
 
