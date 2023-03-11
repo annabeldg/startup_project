@@ -1,7 +1,8 @@
 import pandas as pd
+import numpy as np
 
 def one_hot_encode_last_equity_funding_type(data, column):
-   
+
     # Get unique values
     unique_values = data[column].unique()
 
@@ -19,7 +20,7 @@ def one_hot_encode_last_equity_funding_type(data, column):
     return binary_df
 
 def continuous_encode(data, column):
-    
+
     # Group the data by the values in the specified column and count the number of occurrences of each value
     counts = data.groupby(column).size()
 
@@ -41,17 +42,17 @@ def replace_rare_values_with_others(data, column):
     value_counts = data[column].value_counts()
 
     # Get values that appear fewer than 2 times
-    rare_values = value_counts[value_counts < 2].index.tolist()
+    rare_values = value_counts[value_counts < 50].index.tolist()
 
     # Replace rare values with "OTHERS"
     data[column] = data[column].apply(lambda x: "OTHERS" if x in rare_values else x)
 
     return data
 
-# STEP 2 --> Encode 
+# STEP 2 --> Encode
 
 def one_hot_encode_headquarters_Country(data, column):
-   
+
     # Get unique values
     unique_values = data[column].unique()
 
@@ -71,6 +72,10 @@ def one_hot_encode_headquarters_Country(data, column):
 # Clean last equity funding
 
 def drop_columns(data):
-    columns_to_drop = ["NaN", "series_unknown", "undisclosed","corporate_round", "initial_coin_offering"]
-    cleaned_df = data.drop(columns=columns_to_drop, errors="ignore")
-    return cleaned_df
+
+    # Change according to threshold but here are all of them
+    columns_to_drop = [np.nan, "series_unknown", "undisclosed","corporate_round", "initial_coin_offering"]
+
+    data.drop(columns=columns_to_drop, inplace=True)
+
+    return data
