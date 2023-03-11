@@ -1,3 +1,5 @@
+from sklearn.dummy import DummyClassifier
+
 import os
 import numpy as np
 import pandas as pd
@@ -35,22 +37,8 @@ X[columns_to_scale]=scaler.fit_transform(X[columns_to_scale])
 
 X_train, X_test, y_train, y_test = train_test_split(X, y)
 
-model = LogisticRegression(max_iter=1000)
-grid_dict= {'penalty':['l2', 'none'],'C':[0.01, 0.1, 0.5, 1, 1.5],'class_weight':['balanced', 'none']}
-scoring_list=['accuracy','recall','precision', 'f1']
-search = GridSearchCV(model,grid_dict, scoring = scoring_list[2],cv = 5,n_jobs=-1)
-search.fit(X_train, y_train)
+baseline_model = DummyClassifier(strategy="most_frequent") # Baseline
+baseline_model.fit(X_train, y_train) # Calculate value for stratgy
+baseline_score=baseline_model.score(X_test, y_test)
 
-print(f'best score: {search.best_score_}')
-print(f'best params: {search.best_params_}')
-print(f'best estimator: {search.best_estimator_}')
-
-model=search.best_estimator_
-
-y_true = y_test
-y_pred = model.predict(X_test)
-
-print('Accuracy =', round(accuracy_score(y_true, y_pred), 3)) # Accuracy
-print('Precision =', round(precision_score(y_true, y_pred), 3)) # Precision
-print('Recall =', round(recall_score(y_true, y_pred), 3)) # Recall
-print('F1 score =', round(f1_score(y_true, y_pred), 3)) # F1 score
+print(baseline_score)
