@@ -13,19 +13,12 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
-from sklearn.preprocessing import StandardScaler
-
 # data
 data_path=os.path.join(os.path.abspath(os.path.dirname(os.getcwd())),'raw_data')
 df=pd.read_csv(os.path.join(data_path,'startups_modified.csv'))
 
 X=df.drop(columns='Target', axis=1)
 y=df.Target
-
-#scaling-to remove
-scaler=StandardScaler()
-columns_to_scale=['num_funding_rounds', 'last_equity_funding_total', 'employeeCount','Round 1','Round 2', 'Round 3', 'Round 4', 'Round 5','days_between_dates']
-X[columns_to_scale]=scaler.fit_transform(X[columns_to_scale])
 
 X_train, X_test, y_train, y_test = train_test_split(X, y)
 
