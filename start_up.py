@@ -18,6 +18,8 @@ from preprocessing.scaling import scale_standard, scale_minmax
 
 from preprocessing.drop_duplicates import industry_encoding, technology_encoding, funding_encoding, merged_all
 
+from preprocessing.smote import smote_resample
+
 # Read our main database, the startups.csv
 data_path = os.path.join(os.path.abspath(os.getcwd()),'raw_data')
 df = pd.read_csv(os.path.join(data_path,'startups.csv'))
@@ -119,17 +121,23 @@ data_scaled = data_noout
 
 print('Feature scaling: Success')
 
-
 ## 7. BALANCING ##
 
-print('Data balancing: To be done')
+# Divide features and targets
+X = data_scaled.drop(columns='Target')
+y = data_scaled['Target']
 
+# Perform a smote on target
+X, y = smote_resample(X, y, ratio=0.3)
 
-print(data_scaled.shape)
+print('SMOTE balancing: Success')
 
+# TEMPORARY: reconcatenate
+data_balanced = X.join(y)
 
+print(data_balanced.shape)
 
-data_scaled.to_csv(os.path.join(data_path, 'startups_modified.csv'), index=False)
+data_balanced.to_csv(os.path.join(data_path, 'startups_modified.csv'), index=False)
 
 ## IF WE HAVE SOME TIME ##
 
