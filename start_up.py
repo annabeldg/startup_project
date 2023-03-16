@@ -4,21 +4,18 @@ import numpy as np
 
 from preprocessing.create_target import create_target
 from preprocessing.format_json_to_float import json_to_float
-
 from preprocessing.encode import replace_rare_values_with_others, one_hot_encode_headquarters_Country, drop_columns
 from preprocessing.encode import one_hot_encode_last_equity_funding_type
-
 from preprocessing.engineer import calculate_days_between_dates
-
 from preprocessing.missing_data import miss_total, miss_hq, miss_employee, miss_round1, miss_round2345
-
 from preprocessing.outliers import outlier_rounds, outlier_total
-
 from preprocessing.scaling import scale_standard, scale_minmax
-
 from preprocessing.drop_duplicates import industry_encoding, technology_encoding, funding_encoding, merged_all
-
 from preprocessing.smote import smote_resample
+
+from sklearn.model_selection import train_test_split
+from modeling.model import baseline, logistic_regression, prediction
+
 
 # Read our main database, the startups.csv
 data_path = os.path.join(os.path.abspath(os.getcwd()),'raw_data')
@@ -132,12 +129,30 @@ X, y = smote_resample(X, y, ratio=0.3)
 
 print('SMOTE balancing: Success')
 
+
+## 8. MODELLING ##
+
+# Compute baseline score
+baseline_score = baseline(X, y)
+print(f'Baseline score: {round(baseline_score,2)}')
+
+# Train-Test Split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=2)
+
+# Logistic regression
+model, precision = logistic_regression(X_train, X_test, y_train, y_test)
+print(f'Model precision: {str(precision)}')
+
+# Prediction
+# y_pred = prediction(model, X_new)
+
+
 # TEMPORARY: reconcatenate
-data_balanced = X.join(y)
+# data_balanced = X.join(y)
 
-print(data_balanced.shape)
+#print(data_balanced.shape)
 
-data_balanced.to_csv(os.path.join(data_path, 'startups_modified.csv'), index=False)
+#data_balanced.to_csv(os.path.join(data_path, 'startups_modified.csv'), index=False)
 
 ## IF WE HAVE SOME TIME ##
 
