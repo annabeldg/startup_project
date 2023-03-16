@@ -42,3 +42,8 @@ for point in bullet_points:
     if st.button(point):
         # Add your code for when the button is clicked here
         st.write(f"You clicked the button for {point}!")
+
+for point in bullet_points:
+    st.write(point)
+    user_input = st.text_input(label="", value="")
+    st.write("You typed:", user_input)
