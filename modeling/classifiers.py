@@ -28,9 +28,9 @@ baseline_score=baseline_model.score(X_test, y_test)
 print(f'baseline score: {round(baseline_score,2)}')
 
 #model=LogisticRegression(max_iter=1000)
-model = KNeighborsClassifier()
+#model = KNeighborsClassifier()
 #model=RandomForestClassifier()
-#model=SVC(kernel='linear', C=10)
+model=SVC()
 #model=SGDClassifier(loss='log_loss')
 
 if type(model).__name__=='RandomForestClassifier':
@@ -41,6 +41,9 @@ elif type(model).__name__=='KNeighborsClassifier':
     grid_dict= {'n_neighbors':[1,2,3,4,5]}
 elif type(model).__name__=='SVC':
     grid_dict= {'kernel':['linear','poly','rbf','sigmoid'], 'C':[0.01, 0.1, 1],'class_weight':['balanced', 'none']}
+    grid_dict= {'kernel':['linear','poly'], 'C':[0.01, 0.1]}
+    grid_dict= {'kernel':['linear','poly','rbf'], 'C':[0.01, 0.1]}
+    grid_dict= {'kernel':['linear','poly','rbf'], 'C':[0.01, 0.1, 1],'class_weight':['balanced', 'none']}
 elif type(model).__name__=='SGDClassifier':
     grid_dict= {'penalty':['l2', 'l1', 'elasticnet', 'none'],'alpha':[0.01, 0.1,1]}
 
