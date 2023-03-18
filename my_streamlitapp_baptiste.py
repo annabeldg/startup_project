@@ -17,11 +17,31 @@ st.subheader("Are you a founder?")
 st.subheader("Would you like to know if you startup is going get acquired?")
 st.markdown("<h2 style='color: blue;font-size: 20px;' >Then you came to the right place!</h2>", unsafe_allow_html=True)
 st.markdown("<h2 style='color: blue; font-size: 20px;' >In this demo, we will start by asking you specific information about your startup:</h2>", unsafe_allow_html=True)
+
+if st.button('Aleph Farms'):
+    date_to_fill= datetime.date(2017, 7, 1)
+    employee_nb_to_fill=150
+    industry_to_fill=["Food and Beverage"]
+    technology_to_fill=["Biotechnology"]
+    country_to_fill="IL"
+    last_round_date_to_fill=datetime.date(2021, 7, 1)
+    round_to_fill=[2400000,12000000,105000000,0,0]
+    last_round_to_fill="post ipo equity"
+else:
+    date_to_fill=datetime.date(2013, 3, 30)
+    employee_nb_to_fill=0
+    industry_to_fill=["Advertising"]
+    technology_to_fill=["AR and VR"]
+    country_to_fill="OTHERS"
+    last_round_date_to_fill=datetime.date(2013, 3, 30)
+    round_to_fill=[0,0,0,0,0]
+    last_round_to_fill="seed"
+
 st.markdown("<h2 style='color: red;' >Company information</h2>", unsafe_allow_html=True)
 
-d = st.date_input("When was your company founded?",datetime.date(2013, 3, 30))
+d = st.date_input("When was your company founded?",date_to_fill)
 
-employee_nb = st.number_input("How many employees work in yout company?",0)
+employee_nb = st.number_input("How many employees work in yout company?",employee_nb_to_fill)
 
 industries = st.multiselect("What is your company's industry?",
                             ['Advertising', 'Agriculture and Farming', 'Clothing and Apparel', 'Commerce and Shopping',
@@ -32,28 +52,31 @@ industries = st.multiselect("What is your company's industry?",
                              'Legal', 'Life Sciences', 'Logistics', 'Manufacturing', 'Media and Entertainment',
                              'Messaging and Telecommunications','Music and Audio', 'Natural Resources', 'Navigation and Mapping',
                              'Payments', 'Privacy and Security', 'Professional Services','Real Estate and Construction',
-                             'Sales and Marketing', 'Software', 'Sports', 'Transportation', 'Travel and Tourism', 'Video'])
+                             'Sales and Marketing', 'Software', 'Sports', 'Transportation', 'Travel and Tourism', 'Video'],
+                            default=industry_to_fill)
 
 industries= list(map(lambda x: x.replace('Software', 'Software_x'), industries))
 
-technologies= st.multiselect("On what technology is your company built on?",['AR and VR', 'Artificial Intelligence', 'Biotechnology', 'BlockChain', 'Hardware', 'Science and Engineering', 'Software', 'Sustainability'])
+technologies= st.multiselect("On what technology is your company built on?",['AR and VR', 'Artificial Intelligence',
+                            'Biotechnology', 'BlockChain', 'Hardware', 'Science and Engineering', 'Software', 'Sustainability'],
+                             default=technology_to_fill)
 
 techonlogies= list(map(lambda x: x.replace('Software', 'Software_y'), technologies))
 
 country = st.selectbox("In which country is company established?",
-                       ['OTHERS','CN', 'US', 'VN', 'CO', 'CA', 'DK', 'JP', 'SE', 'BE', 'NL', 'IT', 'AU', 'IL',
+                       [country_to_fill,'OTHERS','CN', 'US', 'VN', 'CO', 'CA', 'DK', 'JP', 'SE', 'BE', 'NL', 'IT', 'AU', 'IL',
                         'ES', 'DE', 'IN', 'CH', 'AR', 'GB', 'KR', 'BR', 'PT', 'EG', 'PL', 'FR', 'HK', 'TW', 'NO',
                         'RO', 'BD', 'RU', 'ZA', 'MY', 'IE', 'MX', 'NG', 'AE', 'EE', 'CL', 'PK', 'SG', 'HU', 'CZ',
                         'UA', 'LU', 'CY', 'ID', 'KE', 'FI', 'AT', 'UG', 'TR', 'NZ', 'TH', 'GH', 'SA', 'LT', 'PH', 'LV', 'BG', 'GR'])
 
 st.markdown("<h2 style='color: red;' >Funding rounds</h2>", unsafe_allow_html=True)
 
-stages_list=['seed', 'pre seed', 'private equity', 'series a', 'angel', 'equity crowdfunding', 'series b', 'series c',
+stages_list=[last_round_to_fill,'seed', 'pre seed', 'private equity', 'series a', 'angel', 'equity crowdfunding', 'series b', 'series c',
              'post ipo equity', 'series d', 'series e', 'series f', 'series g', 'series h']
 stage= st.selectbox("What is your last funding round?",stages_list)
 stage=stage.replace(" ","_")
 
-d_funding = st.date_input("When was your last funding round?",datetime.date(2013, 3, 30))
+d_funding = st.date_input("When was your last funding round?",last_round_date_to_fill)
 
 funding_dict={}
 funding_rounds=['Round 1','Round 2','Round 3','Round 4','Round 5']
@@ -61,9 +84,9 @@ for index, funding_round in enumerate(funding_rounds):
 
     scaler_min=minmax_scaler.data_min_[index]
     scaler_max=minmax_scaler.data_max_[index]
-    print(scaler_min, scaler_max)
 
-    amount = st.number_input(f'USD amount raised for {str(funding_round).replace("_"," ")}:' + str(),0)
+    amount = st.number_input(f'USD amount raised for {str(funding_round).replace("_"," ")}:' + str(),
+                             round_to_fill[index])
                              #min_value=scaler_min,max_value=scaler_max
     funding_dict[funding_round]=amount
 
@@ -123,7 +146,13 @@ model = pickle.load(open(os.path.join(model_path,"startup_model.pkl"),"rb"))
 
 result=model.predict(input_df)
 
-print(f'prediction: {result}')
+st.markdown("<h2 style='color: red;' >Prediction</h2>", unsafe_allow_html=True)
+if result[0]==0:
+    pred="Failure"
+if result[0]==1:
+    pred="Success"
+
+st.write(pred)
 
 ###Shap###
 
