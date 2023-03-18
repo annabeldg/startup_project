@@ -13,7 +13,7 @@ st.markdown("<h2 style='color: blue;font-size: 20px;' >Then you came to the righ
 st.markdown("<h2 style='color: blue; font-size: 20px;' >In this demo, we will start by asking you specific information about your startup:</h2>", unsafe_allow_html=True)
 st.markdown("<h2 style='color: red;' >Company information</h2>", unsafe_allow_html=True)
 
-d = st.date_input("When was your company founded?",datetime.date(2000, 1, 1))
+d = st.date_input("When was your company founded?",datetime.date(2013, 3, 30))
 
 employee_nb = st.number_input("How many employees work in yout company?",0)
 
@@ -47,7 +47,7 @@ stages_list=['seed', 'pre seed', 'private equity', 'series a', 'angel', 'equity 
 stage= st.selectbox("What is your last funding round?",stages_list)
 stage=stage.replace(" ","_")
 
-d_funding = st.date_input("When was your last funding round?",datetime.date(2000, 1, 1))
+d_funding = st.date_input("When was your last funding round?",datetime.date(2013, 3, 30))
 
 funding_dict={}
 funding_rounds=['Round 1','Round 2','Round 3','Round 4','Round 5']
@@ -89,7 +89,19 @@ input_df["days_between_dates"] = (d_funding-d).days
 
 input_df.fillna(0,inplace=True)
 
-#input_df.to_excel(os.path.join(data_path,'x_new.xlsx'),index=False)
+###Scaling###
+
+scalers_path=os.path.join(os.getcwd(),'preprocessing')
+
+standard = ['num_funding_rounds','last_equity_funding_total','employeeCount','days_between_dates']
+standard_scaler = pickle.load(open(os.path.join(scalers_path,"standard_scaler.pkl"),"rb"))
+input_df[standard] = standard_scaler.transform(input_df[standard])
+
+minmax = ['Round 1', 'Round 2', 'Round 3', 'Round 4', 'Round 5']
+minmax_scaler = pickle.load(open(os.path.join(scalers_path,"minmax_scaler.pkl"),"rb"))
+input_df[minmax] = minmax_scaler.transform(input_df[minmax])
+
+input_df.to_excel(os.path.join(data_path,'x_new.xlsx'),index=False)
 
 ###Predict###
 

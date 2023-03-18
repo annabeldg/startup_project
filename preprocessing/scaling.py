@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
+import pickle
 
 to_scale = ['num_funding_rounds', 'last_equity_funding_total', 'employeeCount',
             'Round 1', 'Round 2', 'Round 3', 'Round 4', 'Round 5',
@@ -28,6 +29,8 @@ def scale_standard(df):
 
     df[standard] = scaler.transform(df[standard])
 
+    pickle.dump(scaler, open('preprocessing/standard_scaler.pkl', 'wb'))
+
 
 def scale_minmax(df):
     '''
@@ -42,3 +45,5 @@ def scale_minmax(df):
     scaler.fit(df[minmax])
 
     df[minmax] = scaler.transform(df[minmax])
+
+    pickle.dump(scaler, open('preprocessing/minmax_scaler.pkl', 'wb'))
