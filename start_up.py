@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import numpy as np
 import pickle
+import shap
 
 from preprocessing.create_target import create_target
 from preprocessing.format_json_to_float import json_to_float
@@ -144,6 +145,10 @@ print(f'Model precision: {str(precision)}')
 
 # Save model
 pickle.dump(model, open('modeling/startup_model.pkl', 'wb'))
+
+#Shap
+explainer = shap.LinearExplainer(model, X_train)
+pickle.dump(explainer, open('modeling/shap_explainer.pkl', 'wb'))
 
 # Prediction
 # y_pred = prediction(model, X_new)

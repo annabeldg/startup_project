@@ -4,6 +4,12 @@ import datetime
 import numpy as np
 import pandas as pd
 import streamlit as st
+from matplotlib import pyplot as plt
+import shap
+
+scalers_path=os.path.join(os.getcwd(),'preprocessing')
+minmax_scaler = pickle.load(open(os.path.join(scalers_path,"minmax_scaler.pkl"),"rb"))
+standard_scaler = pickle.load(open(os.path.join(scalers_path,"standard_scaler.pkl"),"rb"))
 
 st.title('Predicting Startup Success')
 
@@ -51,8 +57,14 @@ d_funding = st.date_input("When was your last funding round?",datetime.date(2013
 
 funding_dict={}
 funding_rounds=['Round 1','Round 2','Round 3','Round 4','Round 5']
-for funding_round in funding_rounds:
+for index, funding_round in enumerate(funding_rounds):
+
+    scaler_min=minmax_scaler.data_min_[index]
+    scaler_max=minmax_scaler.data_max_[index]
+    print(scaler_min, scaler_max)
+
     amount = st.number_input(f'USD amount raised for {str(funding_round).replace("_"," ")}:' + str(),0)
+                             #min_value=scaler_min,max_value=scaler_max
     funding_dict[funding_round]=amount
 
 data_path=os.path.join(os.path.abspath(os.getcwd()),'raw_data')
@@ -89,16 +101,16 @@ input_df["days_between_dates"] = (d_funding-d).days
 
 input_df.fillna(0,inplace=True)
 
+if 'Software' in input_df.columns:
+    input_df.drop(columns=['Software'], axis=1, inplace =True)
+
+
 ###Scaling###
 
-scalers_path=os.path.join(os.getcwd(),'preprocessing')
-
 standard = ['num_funding_rounds','last_equity_funding_total','employeeCount','days_between_dates']
-standard_scaler = pickle.load(open(os.path.join(scalers_path,"standard_scaler.pkl"),"rb"))
 input_df[standard] = standard_scaler.transform(input_df[standard])
 
 minmax = ['Round 1', 'Round 2', 'Round 3', 'Round 4', 'Round 5']
-minmax_scaler = pickle.load(open(os.path.join(scalers_path,"minmax_scaler.pkl"),"rb"))
 input_df[minmax] = minmax_scaler.transform(input_df[minmax])
 
 input_df.to_excel(os.path.join(data_path,'x_new.xlsx'),index=False)
@@ -111,4 +123,12 @@ model = pickle.load(open(os.path.join(model_path,"startup_model.pkl"),"rb"))
 
 result=model.predict(input_df)
 
-print(result)
+print(f'prediction: {result}')
+
+###Shap###
+
+explainer = pickle.load(open(os.path.join(os.path.join(os.getcwd(),'modeling'),"shap_explainer.pkl"),"rb"))
+shap_values = explainer(input_df)
+#print(shap_values)
+shap.plots.waterfall(shap_values[0],show=False, max_display=30)
+plt.savefig(os.path.join(os.getcwd(),'shap.png'))
