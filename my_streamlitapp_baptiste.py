@@ -1,40 +1,32 @@
-import streamlit as st
-import pandas as pd
-import numpy as np
-import joblib
-import streamlit as st
-import datetime
 import os
+import pickle
+import datetime
+import numpy as np
+import pandas as pd
+import streamlit as st
 
 st.title('Predicting Startup Success')
 
 st.subheader("Are you a founder?")
 st.subheader("Would you like to know if you startup is going get acquired?")
-st.markdown("<h2 style='color: yellow;font-size: 20px;' >Then you came to the right place!</h2>", unsafe_allow_html=True)
-st.markdown("<h2 style='color: yellow; font-size: 20px;' >In this demo, we will start by asking you specific information about your startup:</h2>", unsafe_allow_html=True)
-
-# 1. num_funding_rounds => done
-# 2. last_equity_funding_total => done
-# 3. employeeCount => done
-# 4. industry (multi-select) => done
-# 5. technology (multi-select) => done
-# 6. headquartersCountry (uni-select) => done
-# 7. funding_rounds: each funding round with amount raised => done
-# 8. founded_on + last_funding_on => days_between_dates
-
+st.markdown("<h2 style='color: blue;font-size: 20px;' >Then you came to the right place!</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='color: blue; font-size: 20px;' >In this demo, we will start by asking you specific information about your startup:</h2>", unsafe_allow_html=True)
 st.markdown("<h2 style='color: red;' >Company information</h2>", unsafe_allow_html=True)
 
 d = st.date_input("When was your company founded?",datetime.date(2000, 1, 1))
 
 employee_nb = st.number_input("How many employees work in yout company?",0)
 
-industries = st.multiselect("What is your company's industry?",['Advertising', 'Agriculture and Farming', 'Clothing and Apparel', 'Commerce and Shopping',
-                                                              'Community and Lifestyle', 'Computer Hardware', 'Consumer Electronics', 'Consumer Goods',
-                                                              'Content and Publishing', 'Data and Analytics', 'Design', 'Education', 'Energy', 'Environment and Sustainability',
-                                                              'Events', 'Financial Services', 'Food and Beverage', 'Gaming', 'Government and Military', 'Health Care', 'HumanResources',
-                                                              'Legal', 'Life Sciences', 'Logistics', 'Manufacturing', 'Media and Entertainment', 'Messaging and Telecommunications',
-                                                              'Music and Audio', 'Natural Resources', 'Navigation and Mapping', 'Payments', 'Privacy and Security', 'Professional Services',
-                                                              'Real Estate and Construction', 'Sales and Marketing', 'Software', 'Sports', 'Transportation', 'Travel and Tourism', 'Video'])
+industries = st.multiselect("What is your company's industry?",
+                            ['Advertising', 'Agriculture and Farming', 'Clothing and Apparel', 'Commerce and Shopping',
+                             'Community and Lifestyle', 'Computer Hardware', 'Consumer Electronics', 'Consumer Goods',
+                             'Content and Publishing', 'Data and Analytics', 'Design', 'Education', 'Energy',
+                             'Environment and Sustainability','Events', 'Financial Services', 'Food and Beverage', 'Gaming',
+                             'Government and Military', 'Health Care', 'HumanResources',
+                             'Legal', 'Life Sciences', 'Logistics', 'Manufacturing', 'Media and Entertainment',
+                             'Messaging and Telecommunications','Music and Audio', 'Natural Resources', 'Navigation and Mapping',
+                             'Payments', 'Privacy and Security', 'Professional Services','Real Estate and Construction',
+                             'Sales and Marketing', 'Software', 'Sports', 'Transportation', 'Travel and Tourism', 'Video'])
 
 industries= list(map(lambda x: x.replace('Software', 'Software_x'), industries))
 
@@ -42,21 +34,21 @@ technologies= st.multiselect("On what technology is your company built on?",['AR
 
 techonlogies= list(map(lambda x: x.replace('Software', 'Software_y'), technologies))
 
-country = st.selectbox("In which country is company established?",['OTHERS','CN', 'US', 'VN', 'CO', 'CA', 'DK', 'JP', 'SE', 'BE', 'NL', 'IT', 'AU', 'IL',
-                                                                     'ES', 'DE', 'IN', 'CH', 'AR', 'GB', 'KR', 'BR', 'PT', 'EG', 'PL', 'FR', 'HK', 'TW', 'NO',
-                                                                     'RO', 'BD', 'RU', 'ZA', 'MY', 'IE', 'MX', 'NG', 'AE', 'EE', 'CL', 'PK', 'SG', 'HU', 'CZ',
-                                                                     'UA', 'LU', 'CY', 'ID', 'KE', 'FI', 'AT', 'UG', 'TR', 'NZ', 'TH', 'GH', 'SA', 'LT', 'PH', 'LV', 'BG', 'GR'])
+country = st.selectbox("In which country is company established?",
+                       ['OTHERS','CN', 'US', 'VN', 'CO', 'CA', 'DK', 'JP', 'SE', 'BE', 'NL', 'IT', 'AU', 'IL',
+                        'ES', 'DE', 'IN', 'CH', 'AR', 'GB', 'KR', 'BR', 'PT', 'EG', 'PL', 'FR', 'HK', 'TW', 'NO',
+                        'RO', 'BD', 'RU', 'ZA', 'MY', 'IE', 'MX', 'NG', 'AE', 'EE', 'CL', 'PK', 'SG', 'HU', 'CZ',
+                        'UA', 'LU', 'CY', 'ID', 'KE', 'FI', 'AT', 'UG', 'TR', 'NZ', 'TH', 'GH', 'SA', 'LT', 'PH', 'LV', 'BG', 'GR'])
 
 st.markdown("<h2 style='color: red;' >Funding rounds</h2>", unsafe_allow_html=True)
 
-stages_dict={}
-stages_list=['seed', 'pre_seed', 'private_equity', 'series_a', 'angel', 'equity_crowdfunding', 'series_b', 'series_c', 'post_ipo_equity', 'series_d', 'series_e', 'series_f', 'series_g', 'series_h']
-for stage in stages_list:
-    stages_dict[stage]=stage.replace("_"," ")
-stage= st.selectbox("What is your last funding round?",stages_dict.values())
+stages_list=['seed', 'pre seed', 'private equity', 'series a', 'angel', 'equity crowdfunding', 'series b', 'series c',
+             'post ipo equity', 'series d', 'series e', 'series f', 'series g', 'series h']
+stage= st.selectbox("What is your last funding round?",stages_list)
 stage=stage.replace(" ","_")
 
 d_funding = st.date_input("When was your last funding round?",datetime.date(2000, 1, 1))
+
 funding_dict={}
 funding_rounds=['Round 1','Round 2','Round 3','Round 4','Round 5']
 for funding_round in funding_rounds:
@@ -69,17 +61,15 @@ input_columns=df.columns.to_list()
 input_columns.remove('Target')
 input_df = pd.DataFrame(columns=input_columns)
 
-#print(input_columns)
-
 input_df.loc[0, 'employeeCount'] = employee_nb
+
+input_df.loc[0, country] = 1
 
 for industry in industries:
     input_df.loc[0, industry] = 1
 
 for technology in technologies:
     input_df.loc[0, technology] = 1
-
-input_df.loc[0, country] = 1
 
 funding_rounds_count=0
 last_funding_round_amount=0
@@ -100,3 +90,13 @@ input_df["days_between_dates"] = (d_funding-d).days
 input_df.fillna(0,inplace=True)
 
 #input_df.to_excel(os.path.join(data_path,'x_new.xlsx'),index=False)
+
+###Predict###
+
+model_path=os.path.join(os.getcwd(),'modeling')
+
+model = pickle.load(open(os.path.join(model_path,"startup_model.pkl"),"rb"))
+
+result=model.predict(input_df)
+
+print(result)
