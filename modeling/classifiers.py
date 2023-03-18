@@ -27,10 +27,10 @@ baseline_model.fit(X_train, y_train)
 baseline_score=baseline_model.score(X_test, y_test)
 print(f'baseline score: {round(baseline_score,2)}')
 
-#model=LogisticRegression(max_iter=1000)
+model=LogisticRegression(max_iter=1000)
 #model = KNeighborsClassifier()
 #model=RandomForestClassifier()
-model=SVC()
+#model=SVC()
 #model=SGDClassifier(loss='log_loss')
 
 if type(model).__name__=='RandomForestClassifier':
@@ -63,3 +63,10 @@ print('Accuracy =', round(accuracy_score(y_true, y_pred), 2)) # Accuracy
 print('Precision =', round(precision_score(y_true, y_pred), 2)) # Precision
 print('Recall =', round(recall_score(y_true, y_pred), 2)) # Recall
 print('F1 score =', round(f1_score(y_true, y_pred), 2)) # F1 score
+
+#### TEST predict###
+data_path=os.path.join(os.path.abspath(os.path.dirname(os.getcwd())),'raw_data')
+df_new=pd.read_excel(os.path.join(data_path,'X_new.xlsx'))
+
+result=model.predict(df_new)
+print(result)
