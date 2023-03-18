@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import numpy as np
+import pickle
 
 from preprocessing.create_target import create_target
 from preprocessing.format_json_to_float import json_to_float
@@ -15,6 +16,7 @@ from preprocessing.smote import smote_resample
 
 from sklearn.model_selection import train_test_split
 from modeling.model import baseline, logistic_regression, prediction
+
 
 
 # Read our main database, the startups.csv
@@ -118,30 +120,30 @@ data_scaled = data_noout
 
 print('Feature scaling: Success')
 
-## 7. BALANCING ##
+
+## 8. MODELLING ##
 
 # Divide features and targets
 X = data_scaled.drop(columns='Target')
 y = data_scaled['Target']
-
-
-## 8. MODELLING ##
-
-# Compute baseline score
-baseline_score = baseline(X, y)
-print(f'Baseline score: {round(baseline_score,2)}')
 
 # Train-Test Split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=2)
 
 # Perform a smote on train set
 X_train, y_train = smote_resample(X_train, y_train, ratio=0.3)
-
 print('SMOTE balancing: Success')
+
+# Compute baseline score
+baseline_score = baseline(X_train, y_train)
+print(f'Baseline score: {round(baseline_score,2)}')
 
 # Logistic regression
 model, precision = logistic_regression(X_train, X_test, y_train, y_test)
 print(f'Model precision: {str(precision)}')
+
+# Save model
+pickle.dump(model, open('modeling/startup_model.pkl', 'wb'))
 
 # Prediction
 # y_pred = prediction(model, X_new)
