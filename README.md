@@ -1,2 +1,1 @@
-# startup_project
-project
+# Predicting startup success!
