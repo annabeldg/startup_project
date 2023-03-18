@@ -124,11 +124,6 @@ print('Feature scaling: Success')
 X = data_scaled.drop(columns='Target')
 y = data_scaled['Target']
 
-# Perform a smote on target
-X, y = smote_resample(X, y, ratio=0.3)
-
-print('SMOTE balancing: Success')
-
 
 ## 8. MODELLING ##
 
@@ -138,6 +133,11 @@ print(f'Baseline score: {round(baseline_score,2)}')
 
 # Train-Test Split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=2)
+
+# Perform a smote on train set
+X_train, y_train = smote_resample(X_train, y_train, ratio=0.3)
+
+print('SMOTE balancing: Success')
 
 # Logistic regression
 model, precision = logistic_regression(X_train, X_test, y_train, y_test)
