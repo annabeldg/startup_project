@@ -26,6 +26,8 @@ st.subheader("Would you like to know if you startup is going get acquired?")
 st.markdown("<h2 style='color: blue;font-size: 20px;' >Then you came to the right place!</h2>", unsafe_allow_html=True)
 st.markdown("<h2 style='color: blue; font-size: 20px;' >In this demo, we will start by asking you specific information about your startup:</h2>", unsafe_allow_html=True)
 
+st.text("")
+
 if st.button('Aleph Farms'):
     date_to_fill= datetime.date(2017, 7, 1)
     employee_nb_to_fill=150
@@ -53,6 +55,8 @@ else:
     last_round_date_to_fill=datetime.date(2013, 3, 30)
     round_to_fill=[2,0,0,0,0]
     last_round_to_fill="seed"
+
+st.text("")
 
 st.markdown("<h2 style='color: red;' >Company information</h2>", unsafe_allow_html=True)
 
@@ -101,7 +105,7 @@ for index, funding_round in enumerate(funding_rounds):
 
     scaler_min=round(int(minmax_scaler.data_min_[index]),0)
     scaler_max=round(int(minmax_scaler.data_max_[index]),0)
-    print(f'scaler min: {scaler_min} / scaler max: {scaler_max}')
+    #print(f'scaler min: {scaler_min} / scaler max: {scaler_max}')
 
     amount = st.number_input(f'USD amount raised for {str(funding_round).replace("_"," ")}:' + str(),
                              value=round_to_fill[index],
