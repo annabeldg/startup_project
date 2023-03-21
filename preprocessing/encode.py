@@ -74,7 +74,10 @@ def one_hot_encode_headquarters_Country(data, column):
 def drop_columns(data):
 
     # Change according to threshold but here are all of them
+
     columns_to_drop = [np.nan, "series_unknown", "undisclosed","corporate_round", "initial_coin_offering"]
+
+    #columns_to_drop = [np.nan, "series_unknown", "undisclosed","corporate_round", "initial_coin_offering", "post_ipo_equity"]
 
     data.drop(columns=columns_to_drop, inplace=True)
 

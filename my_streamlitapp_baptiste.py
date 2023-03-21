@@ -35,6 +35,15 @@ if st.button('Aleph Farms'):
     last_round_date_to_fill=datetime.date(2021, 7, 1)
     round_to_fill=[2400000,12000000,105000000,0,0]
     last_round_to_fill="post ipo equity"
+elif st.button('Prophet'):
+    date_to_fill= datetime.date(2013, 3, 30)
+    employee_nb_to_fill=100
+    industry_to_fill=["Software"]
+    technology_to_fill=["Artificial Intelligence","Software"]
+    country_to_fill="United States"
+    last_round_date_to_fill=datetime.date(2018, 1, 24)
+    round_to_fill=[1000000,50000000,120000000,0,0]
+    last_round_to_fill="private equity"
 else:
     date_to_fill=datetime.date(2013, 3, 30)
     employee_nb_to_fill=0
@@ -42,7 +51,7 @@ else:
     technology_to_fill=["AR and VR"]
     country_to_fill="Other"
     last_round_date_to_fill=datetime.date(2013, 3, 30)
-    round_to_fill=[0,0,0,0,0]
+    round_to_fill=[2,0,0,0,0]
     last_round_to_fill="seed"
 
 st.markdown("<h2 style='color: red;' >Company information</h2>", unsafe_allow_html=True)
@@ -90,12 +99,15 @@ funding_dict={}
 funding_rounds=['Round 1','Round 2','Round 3','Round 4','Round 5']
 for index, funding_round in enumerate(funding_rounds):
 
-    scaler_min=minmax_scaler.data_min_[index]
-    scaler_max=minmax_scaler.data_max_[index]
+    scaler_min=round(int(minmax_scaler.data_min_[index]),0)
+    scaler_max=round(int(minmax_scaler.data_max_[index]),0)
+    print(f'scaler min: {scaler_min} / scaler max: {scaler_max}')
 
     amount = st.number_input(f'USD amount raised for {str(funding_round).replace("_"," ")}:' + str(),
-                             round_to_fill[index])
-                             #min_value=scaler_min,max_value=scaler_max
+                             value=round_to_fill[index],
+                             min_value=scaler_min,
+                             max_value=scaler_max
+                             )
     funding_dict[funding_round]=amount
 
 data_path=os.path.join(os.path.abspath(os.getcwd()),'raw_data')
