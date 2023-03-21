@@ -13,3 +13,4 @@ from sklearn.preprocessing import OneHotEncoder
 # One hot encode technology
 
 def new_preproc(X_new):
+    pass
