@@ -17,14 +17,14 @@ minmax_scaler = pickle.load(open(os.path.join(scalers_path,"minmax_scaler.pkl"),
 standard_scaler = pickle.load(open(os.path.join(scalers_path,"standard_scaler.pkl"),"rb"))
 
 logo = Image.open('images/ExitGPT.png')
-st.image(logo)
+st.image(logo, width=300)
 
-st.title('Predicting Startup Success')
+#st.title('Predicting Startup Success')
 
-st.subheader("Are you a founder?")
-st.subheader("Would you like to know if you startup is going get acquired?")
-st.markdown("<h2 style='color: blue;font-size: 20px;' >Then you came to the right place!</h2>", unsafe_allow_html=True)
-st.markdown("<h2 style='color: blue; font-size: 20px;' >In this demo, we will start by asking you specific information about your startup:</h2>", unsafe_allow_html=True)
+#st.subheader("Are you a founder?")
+#st.subheader("Would you like to know if you startup is going get acquired?")
+#st.markdown("<h2 style='color: black;font-size: 20px;' >Then you came to the right place!</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='color: black; font-size: 20px;' >In this demo, we will start by asking you specific information about your startup:</h2>", unsafe_allow_html=True)
 
 st.text("")
 
@@ -170,13 +170,14 @@ model = pickle.load(open(os.path.join(model_path,"startup_model.pkl"),"rb"))
 
 result=model.predict(input_df)
 
-st.markdown("<h2 style='color: red;' >Prediction</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='color: black;' >Prediction:</h2>", unsafe_allow_html=True)
 if result[0]==0:
     pred="Failure"
 if result[0]==1:
     pred="Success"
 
-st.write(pred)
+st.markdown(f"<h2 style='color: black; font-size: 40px;'>Your startup is predicted to be a {pred}.</h2>", unsafe_allow_html=True)
+#st.write(pred)
 
 ###Shap###
 
