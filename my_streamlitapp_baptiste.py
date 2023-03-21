@@ -7,11 +7,17 @@ import streamlit as st
 from matplotlib import pyplot as plt
 import shap
 
+import streamlit as st
+from PIL import Image
+
 from useful.variables import new_codes
 
 scalers_path=os.path.join(os.getcwd(),'preprocessing')
 minmax_scaler = pickle.load(open(os.path.join(scalers_path,"minmax_scaler.pkl"),"rb"))
 standard_scaler = pickle.load(open(os.path.join(scalers_path,"standard_scaler.pkl"),"rb"))
+
+logo = Image.open('images/ExitGPT.png')
+st.image(logo)
 
 st.title('Predicting Startup Success')
 
