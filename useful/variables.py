@@ -26,4 +26,4 @@ new_codes = {'Other': 'OTHERS', 'China': 'CN', 'United States': 'US', 'Viet Nam'
 countries = list(new_codes.keys())
 countries = sorted(countries)
 countries.insert(0,'bite')
-print(countries)
+#print(countries)

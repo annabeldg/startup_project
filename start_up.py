@@ -14,22 +14,23 @@ from preprocessing.outliers import outlier_rounds, outlier_total
 from preprocessing.scaling import scale_standard, scale_minmax
 from preprocessing.drop_duplicates import industry_encoding, technology_encoding, funding_encoding, merged_all
 from preprocessing.smote import smote_resample
+from preprocessing.remove_post_ipo_equity import remove_post_ipo_equity
 
 from sklearn.model_selection import train_test_split
 from modeling.model import baseline, logistic_regression, prediction
-
-
 
 # Read our main database, the startups.csv
 data_path = os.path.join(os.path.abspath(os.getcwd()),'raw_data')
 df = pd.read_csv(os.path.join(data_path,'startups.csv'))
 print('Dataset successfully read!')
 
+## 0. DROP LINES WHERE last_equity_funding_type']!='post_ipo_equity' ##
+#print(df.shape)
+#df=remove_post_ipo_equity(df)
+#print(df.shape)
 
 ## 1. DROP PROPER DUPLICATES ##
-
 df.drop_duplicates(inplace=True)
-
 
 ## 2. DROP LEFT-JOINED DUPLICATES (+ ENCODING OF INDUSTRY, TECHNOLOGY, ROUNDS) ##
 
@@ -118,6 +119,8 @@ scale_standard(data_noout)
 # Minmax-scale Round 1 to 5
 scale_minmax(data_noout)
 data_scaled = data_noout
+
+data_scaled.to_csv(os.path.join(data_path, 'startups_modified.csv'), index=False)
 
 print('Feature scaling: Success')
 
