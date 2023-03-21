@@ -7,6 +7,8 @@ import streamlit as st
 from matplotlib import pyplot as plt
 import shap
 
+from useful.variables import new_codes
+
 scalers_path=os.path.join(os.getcwd(),'preprocessing')
 minmax_scaler = pickle.load(open(os.path.join(scalers_path,"minmax_scaler.pkl"),"rb"))
 standard_scaler = pickle.load(open(os.path.join(scalers_path,"standard_scaler.pkl"),"rb"))
@@ -23,7 +25,7 @@ if st.button('Aleph Farms'):
     employee_nb_to_fill=150
     industry_to_fill=["Food and Beverage"]
     technology_to_fill=["Biotechnology"]
-    country_to_fill="IL"
+    country_to_fill="Israel"
     last_round_date_to_fill=datetime.date(2021, 7, 1)
     round_to_fill=[2400000,12000000,105000000,0,0]
     last_round_to_fill="post ipo equity"
@@ -32,7 +34,7 @@ else:
     employee_nb_to_fill=0
     industry_to_fill=["Advertising"]
     technology_to_fill=["AR and VR"]
-    country_to_fill="OTHERS"
+    country_to_fill="Other"
     last_round_date_to_fill=datetime.date(2013, 3, 30)
     round_to_fill=[0,0,0,0,0]
     last_round_to_fill="seed"
@@ -63,11 +65,11 @@ technologies= st.multiselect("On what technology is your company built on?",['AR
 
 techonlogies= list(map(lambda x: x.replace('Software', 'Software_y'), technologies))
 
-country = st.selectbox("In which country is company established?",
-                       [country_to_fill,'OTHERS','CN', 'US', 'VN', 'CO', 'CA', 'DK', 'JP', 'SE', 'BE', 'NL', 'IT', 'AU', 'IL',
-                        'ES', 'DE', 'IN', 'CH', 'AR', 'GB', 'KR', 'BR', 'PT', 'EG', 'PL', 'FR', 'HK', 'TW', 'NO',
-                        'RO', 'BD', 'RU', 'ZA', 'MY', 'IE', 'MX', 'NG', 'AE', 'EE', 'CL', 'PK', 'SG', 'HU', 'CZ',
-                        'UA', 'LU', 'CY', 'ID', 'KE', 'FI', 'AT', 'UG', 'TR', 'NZ', 'TH', 'GH', 'SA', 'LT', 'PH', 'LV', 'BG', 'GR'])
+countries = list(new_codes.keys())
+countries = sorted(countries)
+countries.insert(0, country_to_fill)
+
+country = st.selectbox("In which country is company established?", countries)
 
 st.markdown("<h2 style='color: red;' >Funding rounds</h2>", unsafe_allow_html=True)
 
@@ -98,7 +100,7 @@ input_df = pd.DataFrame(columns=input_columns)
 
 input_df.loc[0, 'employeeCount'] = employee_nb
 
-input_df.loc[0, country] = 1
+input_df.loc[0, new_codes[country]] = 1
 
 for industry in industries:
     input_df.loc[0, industry] = 1
