@@ -33,10 +33,19 @@ if st.button('Aleph Farms'):
     employee_nb_to_fill=150
     industry_to_fill=["Food and Beverage"]
     technology_to_fill=["Biotechnology"]
-    country_to_fill="Israel"
+    country_to_fill="Middle East"
     last_round_date_to_fill=datetime.date(2021, 7, 1)
     round_to_fill=[2400000,12000000,105000000,0,0]
     last_round_to_fill="post ipo equity"
+elif st.button('PolyAI'):
+    date_to_fill= datetime.date(2017, 1, 12)
+    employee_nb_to_fill=32
+    industry_to_fill=["Data and Analytics"]
+    technology_to_fill=["Artificial Intelligence","Software"]
+    country_to_fill="Europe"
+    last_round_date_to_fill=datetime.date(2022, 9, 24)
+    round_to_fill=[12000000,14000000,44000000,0,0]
+    last_round_to_fill="series b"
 elif st.button('Prophet'):
     date_to_fill= datetime.date(2013, 3, 30)
     employee_nb_to_fill=100
@@ -51,7 +60,7 @@ else:
     employee_nb_to_fill=0
     industry_to_fill=["Advertising"]
     technology_to_fill=["AR and VR"]
-    country_to_fill="Other"
+    country_to_fill="Europe"
     last_round_date_to_fill=datetime.date(2013, 3, 30)
     round_to_fill=[2,0,0,0,0]
     last_round_to_fill="seed"
@@ -84,11 +93,13 @@ technologies= st.multiselect("On what technology is your company built on?",['AR
 
 techonlogies= list(map(lambda x: x.replace('Software', 'Software_y'), technologies))
 
-countries = list(new_codes.keys())
-countries = sorted(countries)
-countries.insert(0, country_to_fill)
+#countries = list(new_codes.keys())
+#countries = sorted(countries)
+#countries.insert(0, country_to_fill)
 
-country = st.selectbox("In which country is company established?", countries)
+region = st.selectbox("In which country is company established?",
+                       [country_to_fill, 'Africa', 'Asia', 'Central America', 'Europe', 'Middle East', 'North America', 'Oceania',
+                        'South America', 'United States'])
 
 st.markdown("<h2 style='color: red;' >Funding rounds</h2>", unsafe_allow_html=True)
 
@@ -122,7 +133,7 @@ input_df = pd.DataFrame(columns=input_columns)
 
 input_df.loc[0, 'employeeCount'] = employee_nb
 
-input_df.loc[0, new_codes[country]] = 1
+input_df.loc[0, region] = 1
 
 for industry in industries:
     input_df.loc[0, industry] = 1

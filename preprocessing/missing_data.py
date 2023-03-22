@@ -46,10 +46,10 @@ def miss_total(df):
 
 def miss_hq(df):
     '''
-    Startegy: remove rows where headquartersCountry is NaN
+    Startegy: remove rows where region is NaN
     '''
 
-    df = df[df['headquartersCountry'].isnull() == False]
+    df = df[df['region'].isnull() == False]
 
     return df
 
