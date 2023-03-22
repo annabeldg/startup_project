@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from useful.variables import regions
 
 def one_hot_encode_last_equity_funding_type(data, column):
 
@@ -51,7 +52,7 @@ def replace_rare_values_with_others(data, column):
 
 # STEP 2 --> Encode
 
-def one_hot_encode_headquarters_Country(data, column):
+def one_hot_encode_region(data, column):
 
     # Get unique values
     unique_values = data[column].unique()

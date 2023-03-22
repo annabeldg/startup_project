@@ -6,7 +6,7 @@ import shap
 
 from preprocessing.create_target import create_target
 from preprocessing.format_json_to_float import json_to_float
-from preprocessing.encode import replace_rare_values_with_others, one_hot_encode_headquarters_Country, drop_columns
+from preprocessing.encode import replace_rare_values_with_others, one_hot_encode_region, drop_columns
 from preprocessing.encode import one_hot_encode_last_equity_funding_type
 from preprocessing.engineer import calculate_days_between_dates
 from preprocessing.missing_data import miss_total, miss_hq, miss_employee, miss_round1, miss_round2345
@@ -18,6 +18,8 @@ from preprocessing.remove_post_ipo_equity import remove_post_ipo_equity
 
 from sklearn.model_selection import train_test_split
 from modeling.model import baseline, logistic_regression, prediction
+
+from useful.variables import regions
 
 # Read our main database, the startups.csv
 data_path = os.path.join(os.path.abspath(os.getcwd()),'raw_data')
@@ -59,11 +61,13 @@ data_nodup['last_equity_funding_total'] = data_nodup['last_equity_funding_total'
     )
 data_nodup['last_equity_funding_total'] = data_nodup['last_equity_funding_total']/100
 
-# One hot encode countries with threshold for 'OTHERS' if num of occurence < 50, and merge with database
-data_nodup = replace_rare_values_with_others(data_nodup, 'headquartersCountry')
-countries = one_hot_encode_headquarters_Country(data_nodup, 'headquartersCountry')
-countries.drop(columns=[np.nan], inplace=True)
-data_nodup = data_nodup.join(countries)
+# Divide countries by region and one hot encode them
+#data_nodup = replace_rare_values_with_others(data_nodup, 'headquartersCountry')
+data_nodup['headquartersCountry'] = data_nodup['headquartersCountry'].map(lambda x: regions[x], na_action='ignore')
+data_nodup.rename(columns={'headquartersCountry': 'region'}, inplace=True)
+ohe_regions = one_hot_encode_region(data_nodup, 'region')
+ohe_regions.drop(columns=[np.nan], inplace=True)
+data_nodup = data_nodup.join(ohe_regions)
 
 # One hot encode last_equity_funding_type
 left = one_hot_encode_last_equity_funding_type(data_nodup, 'last_equity_funding_type')
@@ -85,9 +89,9 @@ print('Features encoded: Success')
 data_encoded = miss_total(data_encoded)
 data_encoded.drop(columns='last_equity_funding_type', inplace=True)
 
-# Remove rows where headquartersCountry in NaN
+# Remove rows where region in NaN
 data_encoded = miss_hq(data_encoded)
-data_encoded.drop(columns='headquartersCountry', inplace=True)
+data_encoded.drop(columns='region', inplace=True)
 
 # Replace missing values of employeeCount by the median
 miss_employee(data_encoded)
@@ -120,10 +124,8 @@ scale_standard(data_noout)
 scale_minmax(data_noout)
 data_scaled = data_noout
 
-data_scaled.to_csv(os.path.join(data_path, 'startups_modified.csv'), index=False)
-
 print('Feature scaling: Success')
-
+print(data_scaled.shape)
 
 ## 8. MODELLING ##
 
@@ -137,6 +139,10 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
 # Perform a smote on train set
 X_train, y_train = smote_resample(X_train, y_train, ratio=0.3)
 print('SMOTE balancing: Success')
+
+# FOR VIZ PURPOSES: reconcatenate
+data_balanced = X_train.join(y_train)
+data_balanced.to_csv(os.path.join(data_path, 'startups_modified.csv'), index=False)
 
 # Compute baseline score
 baseline_score = baseline(X_train, y_train)
