@@ -17,16 +17,20 @@ minmax_scaler = pickle.load(open(os.path.join(scalers_path,"minmax_scaler.pkl"),
 standard_scaler = pickle.load(open(os.path.join(scalers_path,"standard_scaler.pkl"),"rb"))
 
 logo = Image.open('images/ExitGPT.png')
-st.image(logo, width=300)
+st.image(logo, width=250)
 
-#st.title('Predicting Startup Success')
+st.text("")
+
+st.header('Will your startup successfully exit?')
 
 #st.subheader("Are you a founder?")
 #st.subheader("Would you like to know if you startup is going get acquired?")
 #st.markdown("<h2 style='color: black;font-size: 20px;' >Then you came to the right place!</h2>", unsafe_allow_html=True)
-st.markdown("<h2 style='color: black; font-size: 20px;' >In this demo, we will start by asking you specific information about your startup:</h2>", unsafe_allow_html=True)
+#st.markdown("<h2 style='color: black; font-size: 20px;' >In this demo, we will start by asking you specific information about your startup:</h2>", unsafe_allow_html=True)
 
 st.text("")
+
+st.subheader('Startup examples')
 
 if st.button('Aleph Farms'):
     date_to_fill= datetime.date(2017, 7, 1)
@@ -67,13 +71,14 @@ else:
 
 st.text("")
 
-st.markdown("<h2 style='color: red;' >Company information</h2>", unsafe_allow_html=True)
+st.subheader('Company profile')
+#st.markdown("<h2 style='color: red;' >Company information</h2>", unsafe_allow_html=True)
 
-d = st.date_input("When was your company founded?",date_to_fill)
+d = st.date_input("Founding Date",date_to_fill)
 
-employee_nb = st.number_input("How many employees work in yout company?",employee_nb_to_fill)
+employee_nb = st.number_input("Number of Employees",employee_nb_to_fill)
 
-industries = st.multiselect("What is your company's industry?",
+industries = st.multiselect("Industries?",
                             ['Advertising', 'Agriculture and Farming', 'Clothing and Apparel', 'Commerce and Shopping',
                              'Community and Lifestyle', 'Computer Hardware', 'Consumer Electronics', 'Consumer Goods',
                              'Content and Publishing', 'Data and Analytics', 'Design', 'Education', 'Energy',
@@ -87,7 +92,7 @@ industries = st.multiselect("What is your company's industry?",
 
 industries= list(map(lambda x: x.replace('Software', 'Software_x'), industries))
 
-technologies= st.multiselect("On what technology is your company built on?",['AR and VR', 'Artificial Intelligence',
+technologies= st.multiselect("Technologies used",['AR and VR', 'Artificial Intelligence',
                             'Biotechnology', 'BlockChain', 'Hardware', 'Science and Engineering', 'Software', 'Sustainability'],
                              default=technology_to_fill)
 
@@ -97,18 +102,19 @@ techonlogies= list(map(lambda x: x.replace('Software', 'Software_y'), technologi
 #countries = sorted(countries)
 #countries.insert(0, country_to_fill)
 
-region = st.selectbox("In which country is company established?",
+region = st.selectbox("Headquarters Region",
                        [country_to_fill, 'Africa', 'Asia', 'Central America', 'Europe', 'Middle East', 'North America', 'Oceania',
                         'South America', 'United States'])
 
-st.markdown("<h2 style='color: red;' >Funding rounds</h2>", unsafe_allow_html=True)
+#st.markdown("<h2 style='color: red;' >Funding rounds</h2>", unsafe_allow_html=True)
+st.subheader('Company funding')
 
 stages_list=[last_round_to_fill,'seed', 'pre seed', 'private equity', 'series a', 'angel', 'equity crowdfunding', 'series b', 'series c',
              'post ipo equity', 'series d', 'series e', 'series f', 'series g', 'series h']
-stage= st.selectbox("What is your last funding round?",stages_list)
+stage= st.selectbox("Last funding round",stages_list)
 stage=stage.replace(" ","_")
 
-d_funding = st.date_input("When was your last funding round?",last_round_date_to_fill)
+d_funding = st.date_input("Closing date of last funding round",last_round_date_to_fill)
 
 funding_dict={}
 funding_rounds=['Round 1','Round 2','Round 3','Round 4','Round 5']
@@ -181,13 +187,24 @@ model = pickle.load(open(os.path.join(model_path,"startup_model.pkl"),"rb"))
 
 result=model.predict(input_df)
 
-st.markdown("<h2 style='color: black;' >Prediction:</h2>", unsafe_allow_html=True)
+st.text("")
+st.subheader('Prediction')
+#st.markdown("<h2 style='color: black;' >Prediction:</h2>", unsafe_allow_html=True)
 if result[0]==0:
     pred="Failure"
 if result[0]==1:
     pred="Success"
 
-st.markdown(f"<h2 style='color: black; font-size: 40px;'>Your startup is predicted to be a {pred}.</h2>", unsafe_allow_html=True)
+if pred == 'Failure':
+    st.markdown("<h2 style='color: red;' >No Exit</h2>", unsafe_allow_html=True)
+#    st.markdown("""Prediction: <span style='color:red'>No Exit</span>""",
+#               unsafe_allow_html=True)
+elif pred == 'Success':
+    st.markdown("<h2 style='color: green;' >Successful Exit</h2>", unsafe_allow_html=True)
+#    st.markdown("""Prediction: <span style='color:green'>Successful Exit</span>""",
+#                unsafe_allow_html=True)
+
+#st.markdown(f"<h2 style='color: black; font-size: 40px;'>Your startup is predicted to be a {pred}.</h2>", unsafe_allow_html=True)
 #st.write(pred)
 
 ###Shap###
