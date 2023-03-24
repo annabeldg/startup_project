@@ -76,7 +76,7 @@ def drop_columns(data):
 
     # Change according to threshold but here are all of them
 
-    columns_to_drop = [np.nan, "series_unknown", "undisclosed","corporate_round", "initial_coin_offering"]
+    columns_to_drop = ['nan', "series_unknown", "undisclosed","corporate_round", "initial_coin_offering"]
 
     #columns_to_drop = [np.nan, "series_unknown", "undisclosed","corporate_round", "initial_coin_offering", "post_ipo_equity"]
 
