@@ -32,7 +32,16 @@ st.text("")
 
 st.subheader('Startup examples')
 
-if st.button('Aleph Farms'):
+if st.button('Pabio'):
+    date_to_fill= datetime.date(2020, 5, 20)
+    employee_nb_to_fill=10
+    industry_to_fill=['Professional Services', 'Real Estate and Construction']
+    technology_to_fill=["Software"]
+    country_to_fill="Europe"
+    last_round_date_to_fill=datetime.date(2021, 12, 15)
+    round_to_fill=[1000000,2200000,0,0,0]
+    last_round_to_fill="seed"
+elif st.button('Aleph Farms'):
     date_to_fill= datetime.date(2017, 7, 1)
     employee_nb_to_fill=150
     industry_to_fill=["Food and Beverage"]
@@ -40,25 +49,7 @@ if st.button('Aleph Farms'):
     country_to_fill="Middle East"
     last_round_date_to_fill=datetime.date(2021, 7, 1)
     round_to_fill=[2400000,12000000,105000000,0,0]
-    last_round_to_fill="post ipo equity"
-elif st.button('PolyAI'):
-    date_to_fill= datetime.date(2017, 1, 12)
-    employee_nb_to_fill=32
-    industry_to_fill=["Data and Analytics"]
-    technology_to_fill=["Artificial Intelligence","Software"]
-    country_to_fill="Europe"
-    last_round_date_to_fill=datetime.date(2022, 9, 24)
-    round_to_fill=[12000000,14000000,44000000,0,0]
     last_round_to_fill="series b"
-elif st.button('Prophet'):
-    date_to_fill= datetime.date(2013, 3, 30)
-    employee_nb_to_fill=100
-    industry_to_fill=["Software"]
-    technology_to_fill=["Artificial Intelligence","Software"]
-    country_to_fill="United States"
-    last_round_date_to_fill=datetime.date(2018, 1, 24)
-    round_to_fill=[1000000,50000000,120000000,0,0]
-    last_round_to_fill="private equity"
 else:
     date_to_fill=datetime.date(2013, 3, 30)
     employee_nb_to_fill=0
@@ -110,7 +101,7 @@ region = st.selectbox("Headquarters Region",
 st.subheader('Company funding')
 
 stages_list=[last_round_to_fill,'seed', 'pre seed', 'private equity', 'series a', 'angel', 'equity crowdfunding', 'series b', 'series c',
-             'post ipo equity', 'series d', 'series e', 'series f', 'series g', 'series h']
+             'series d', 'series e', 'series f', 'series g', 'series h']
 stage= st.selectbox("Last funding round",stages_list)
 stage=stage.replace(" ","_")
 

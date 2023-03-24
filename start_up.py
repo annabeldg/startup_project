@@ -17,6 +17,7 @@ from preprocessing.smote import smote_resample
 from preprocessing.remove_post_ipo_equity import remove_post_ipo_equity
 
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import OneHotEncoder
 from modeling.model import baseline, logistic_regression, prediction
 
 from useful.variables import regions
@@ -70,9 +71,16 @@ ohe_regions.drop(columns=[np.nan], inplace=True)
 data_nodup = data_nodup.join(ohe_regions)
 
 # One hot encode last_equity_funding_type
-left = one_hot_encode_last_equity_funding_type(data_nodup, 'last_equity_funding_type')
-left = drop_columns(left)
-data_nodup = data_nodup.join(left)
+encoder = OneHotEncoder(sparse=False)
+data_nodup[encoder.get_feature_names_out()] = encoder.fit_transform(data_nodup[['last_equity_funding_type']])
+for column in encoder.get_feature_names_out():
+    data_nodup.rename(columns={column: column[25:]}, inplace=True)
+#left = one_hot_encode_last_equity_funding_type(data_nodup, 'last_equity_funding_type')
+data_nodup = drop_columns(data_nodup)
+#data_nodup = data_nodup.join(left)
+data_nodup.drop(columns='series_b', inplace=True)
+data_nodup.rename(columns={'post_ipo_equity': 'series_b'}, inplace=True)
+
 
 # Engineer the number of days between last_funding_at and founded_on
 data_nodup = calculate_days_between_dates(data_nodup)
