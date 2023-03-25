@@ -169,7 +169,7 @@ input_df[standard] = standard_scaler.transform(input_df[standard])
 minmax = ['Round 1', 'Round 2', 'Round 3', 'Round 4', 'Round 5']
 input_df[minmax] = minmax_scaler.transform(input_df[minmax])
 
-input_df.to_excel(os.path.join(data_path,'x_new.xlsx'),index=False)
+#input_df.to_excel(os.path.join(data_path,'x_new.xlsx'),index=False)
 
 ###Predict###
 
