@@ -5,7 +5,6 @@ scikit-learn
 jsonlib
 datetime
 regex
-os
 pickle
 shap
 matplotlib.pyplot
