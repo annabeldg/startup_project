@@ -122,8 +122,9 @@ for index, funding_round in enumerate(funding_rounds):
                              )
     funding_dict[funding_round]=amount
 
-data_path=os.path.join(os.path.abspath(os.getcwd()),'raw_data')
-df=pd.read_csv(os.path.join(data_path,'startups_modified.csv'))
+#data_path=os.path.join(os.path.abspath(os.getcwd()),'raw_data')
+#df=pd.read_csv(os.path.join(data_path,'startups_modified.csv'))
+df = pd.read_csv('startups_modified.csv')
 input_columns=df.columns.to_list()
 input_columns.remove('Target')
 input_df = pd.DataFrame(columns=input_columns)

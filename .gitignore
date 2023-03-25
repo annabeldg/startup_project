@@ -1,8 +1,8 @@
+!startups_modified!.csv
 .ipynb_checkpoints
 .DS_Store
 raw_data/
-*.csv
+
 **/__pycache__/
 .env
 data/
-!startups_modified!.csv
