@@ -6,8 +6,7 @@ jsonlib
 datetime
 regex
 shap
-matplotlib.pyplot
+matplotlib
 seaborn
-plotly.express
 spacy
 imblearn
